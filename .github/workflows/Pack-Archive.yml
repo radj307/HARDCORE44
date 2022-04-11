@@ -20,6 +20,7 @@ jobs:
               cd '${{github.workspace}}'
               wget 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.ConsoleLinux-1.6.5.zip' && unzip './*.zip'
               mv WolvenKit\ CLI\ Linux/ WolvenKit
+              chmod -R 0770 ./WolvenKit
               mkdir -p '${{github.workspace}}/STAGING/archive/pc/mod' && mkdir -p '${{github.workspace}}/STAGING/r6/scripts'
               cp '${{github.workspace}}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{github.workspace}}/STAGING/r6/scripts'
               ls -lAgh
