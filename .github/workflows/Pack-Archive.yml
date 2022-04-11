@@ -18,7 +18,7 @@ jobs:
         run:  |
               apt-get update && apt-get install wget unzip
               cd '${{github.workspace}}'
-              wget 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.ConsoleLinux-1.6.5.zip' && unzip './*.zip' && rm './*.zip'
+              wget 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.ConsoleLinux-1.6.5.zip' && unzip './*.zip'
               ls -lAgh
               mv WolvenKit\ CLI\ Linux/ WolvenKit
               mkdir -p '${{github.workspace}}/STAGING/archive/pc/mod' && mkdir -p '${{github.workspace}}/STAGING/r6/scripts'
