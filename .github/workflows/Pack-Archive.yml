@@ -52,6 +52,7 @@ jobs:
         id:     get_version
         run:    |
                 if [ "${{github.event.inputs.tag}}" == "" ];  then TAG="${GITHUB_REF/refs\/tags\//}"; else TAG="${{github.event.inputs.tag}}" ; fi
+                if [ "$TAG" == "refs/heads/main" ]; then TAG=""; fi
                 echo ::set-output name=VERSION::$TAG
                 echo ::set-output name=NAME::"Release $TAG"
                 
