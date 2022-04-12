@@ -3,6 +3,8 @@ name: Generate-Release
 on:
   push:
     tags: '*'
+  push:
+    branches: experimental
   workflow_dispatch:
     inputs:
       tag:
@@ -43,6 +45,9 @@ jobs:
           name: 'HARDCORE44-ARCO'
           path: '${{github.workspace}}/STAGING/*'
           
+      - name:   'Check Branch'
+
+
       - name:   'Create Release Archive'
         run:    |
                 cd '${{github.workspace}}/STAGING'
