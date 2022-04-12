@@ -46,7 +46,7 @@ jobs:
       - name:   'Create Release Archive'
         run:    |
                 cd '${{github.workspace}}/STAGING'
-                zip -T9r HARDCORE44-ARCO.zip './*'
+                zip -T9r HARDCORE44-ARCO.zip .
             
       - name:   'Get Release Information'
         id:     get_version
