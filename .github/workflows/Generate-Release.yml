@@ -1,4 +1,4 @@
-name: Pack-Archive
+name: Generate-Release
 
 on:
   push:
@@ -56,7 +56,7 @@ jobs:
                 echo ::set-output name=VERSION::$TAG
                 echo ::set-output name=NAME::"Release $TAG"
                 
-      - name:   'Create Release'
+      - name:   'Create Github Release'
         uses:   softprops/action-gh-release@v1
         with:
           draft:                    true
@@ -66,4 +66,3 @@ jobs:
           generate_release_notes:   true
           fail_on_unmatched_files:  true
           files:                    ${{ github.workspace }}/STAGING/HARDCORE44-ARCO.zip
-  
