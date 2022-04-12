@@ -4,6 +4,11 @@ on:
   push:
     tags: '*'
   workflow_dispatch:
+    inputs:
+      tag:
+        type:     string
+        default:  ''
+        required: false
 
 jobs:
   build:
@@ -35,3 +40,34 @@ jobs:
         with:
           name: 'HARDCORE44-ARCO'
           path: '${{github.workspace}}/STAGING/*'
+        
+  create-release:
+    runs-on:  ubuntu-latest
+    needs:    build
+    strategy:
+      fail-fast:  true
+    
+    steps:
+      - name:   'Download Artifact'
+        uses:   actions/download-artifact@v2
+        with:
+          name: 'HARDCORE44-ARCO'
+          path: '${{github.workspace}}'
+          
+      - name:   'Get Release Tag'
+        id:     get_version
+        run:    |
+                if [ "${{github.event.inputs.tag}}" == "" ];  then TAG="${GITHUB_REF/refs\/tags\//}"; else TAG="${{github.event.inputs.tag}}" ; fi
+                echo ::set-output name=VERSION::$TAG
+                echo ::set-output name=NAME::"Release $TAG"
+        
+      - name:   'Create Release'
+        uses:   softprops/action-gh-release@v1
+        with:
+          draft:                    true
+          prerelease:               false
+          tag_name:                 ${{ steps.get_version.outputs.VERSION }}
+          name:                     ${{ steps.get_version.outputs.NAME }}
+          generate_release_notes:   true
+          fail_on_unmatched_files:  true
+          files:                    ${{ github.workspace }}/*.zip
