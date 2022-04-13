@@ -61,17 +61,11 @@ jobs:
         run:    |
                 echo ::set-output name=VERSION::$TAG
 
-      - id:     draft
-        shell:  |
-                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
-        run:    |
-                if ('$GITHUB_REF_TYPE' -ne 'tag') { echo '::set-output name=DRAFT::true' } else { echo '::set-output name=DRAFT::false' }
-
       - name:   'Create Github Release'
         id:     make_release
         uses:   softprops/action-gh-release@v1
         with:
-          draft: ${{ steps.draft.outputs.DRAFT }}
+          draft: true
           generate_release_notes: true
           tag_name: ${{ steps.get_tag.outputs.VERSION }}
           files: '*.zip'
