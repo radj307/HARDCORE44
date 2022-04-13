@@ -4,11 +4,6 @@ on:
   push:
     tags: '*'
   workflow_dispatch:
-    inputs:
-      tag:
-        type:     string
-        default:  ''
-        required: false
 
 jobs:
   build:
@@ -19,46 +14,60 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{github.event.inputs.tag}}
           fetch-depth: 0
-      
-      - name:  'Setup Pre-Requisites & Prepare Staging Area'
+        
+      - name: 'Prepare Staging Area'
+        run:  |
+              mkdir '${{ github.workspace }}/STAGING/archive/pc/mod'
+              mkdir '${{ github.workspace }}/STAGING/r6/scripts'
+              
+      - name: 'Stage Scripts'
+        run:  cp '${{ github.workspace }}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{ github.workspace }}/STAGING/r6/scripts'
+              
+      - name:  'Setup Wolvenkit CLI'
         shell: |
                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:   |
-               cd '${{github.workspace}}'
+               cd '${{ github.workspace }}'
                Invoke-WebRequest -Method Get -Uri https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip -OutFile WolvenKit.zip
                Expand-Archive -Path WolvenKit.zip -DestinationPath .
                mv "WolvenKit CLI" WolvenKit
-               mkdir '${{github.workspace}}/STAGING/archive/pc/mod'
-               mkdir '${{github.workspace}}/STAGING/r6/scripts'
-               cp '${{github.workspace}}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{github.workspace}}/STAGING/r6/scripts'
-                  
-      - name:  'Pack .archive'
+               
+      - name:  'Pack Mod Archive'
         shell: |
                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:   |
-               cd '${{github.workspace}}/basegame_REALISM'
+               cd '${{ github.workspace }}/basegame_REALISM'
                ../WolvenKit/WolvenKit.CLI pack -p . -o '../STAGING/archive/pc/mod'
         
-      - name:   'Upload Artifact'
-        uses:   actions/upload-artifact@v2
+      - uses:   actions/upload-artifact@v2
         with:
           name: 'HARDCORE44-ARCO'
-          path: '${{github.workspace}}/STAGING/*'
+          path: '${{ github.workspace }}/STAGING/*'
 
       - name:   'Create Release Archive'
         shell:  |
                 pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:    |
-                cd '${{github.workspace}}/STAGING'
-                Compress-Archive -Path ./* -DestinationPath "../HARDCORE44-ARCO-$TAG.zip"
-            
+                cd '${{ github.workspace }}/STAGING'
+                Compress-Archive -Path ./* -DestinationPath "../RELEASE.zip"
+          
+      - id:     version
+        run:    |
+                cd '${{ github.workspace }}'
+                echo ::set-output NAME=VERSION::'$(git describe --tags --abbrev=0)'
+          
       - name:   'Create Github Release'
+        id:     make_release
         uses:   softprops/action-gh-release@v1
         with:
-          draft:                    true
-          prerelease:               false
-          generate_release_notes:   true
-          fail_on_unmatched_files:  true
-          files:                    './*.zip'
+          generate_release_notes: true
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          
+      - name:   'Upload Release Archive'
+        uses:   actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.make_release.outputs.upload_url }}
+          asset_name: HARDCORE44-ARCO-${{ steps.version.outputs.VERSION }}.zip
+          asset_path: ${{ github.workspace }}/RELEASE.zip
+          asset_content_type: application/zip
