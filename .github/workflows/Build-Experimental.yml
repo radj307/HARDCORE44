@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast:  true
 
@@ -16,17 +16,21 @@ jobs:
           ref: ${{github.event.inputs.tag}}
       
       - name: 'Setup Pre-Requisites & Prepare Staging Area'
+        shell:  |
+                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:  |
               apt-get update && apt-get install wget unzip
               cd '${{github.workspace}}'
-              wget 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.ConsoleLinux-1.6.5.zip' && unzip './*.zip'
-              mv WolvenKit\ CLI\ Linux/ WolvenKit
-              chmod -R 0770 ./WolvenKit
-              mkdir -p '${{github.workspace}}/STAGING/archive/pc/mod' && mkdir -p '${{github.workspace}}/STAGING/r6/scripts'
+              wget -O WolvenKit.zip 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip'
+              Expand-Archive -Path WolvenKit.zip -DestinationPath .
+              mv "WolvenKit CLI" WolvenKit
+              mkdir '${{github.workspace}}/STAGING/archive/pc/mod'
+              mkdir '${{github.workspace}}/STAGING/r6/scripts'
               cp '${{github.workspace}}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{github.workspace}}/STAGING/r6/scripts'
-              ls -lAgh
-                  
+
       - name: 'Pack .archive'
+        shell:  |
+                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:  |
               cd '${{github.workspace}}/basegame_REALISM'
               ../WolvenKit/WolvenKit.CLI pack -p . -o '../STAGING/archive/pc/mod'
