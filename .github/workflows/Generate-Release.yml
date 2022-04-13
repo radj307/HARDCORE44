@@ -58,7 +58,7 @@ jobs:
                 cd '${{ github.workspace }}'
                 $TAG=$(git describe --tags --abbrev=0)
                 echo $TAG
-                echo ::set-output NAME=VERSION::$TAG
+                echo ::set-output name=VERSION::$TAG
           
       - name:   'Create Github Release'
         id:     make_release
