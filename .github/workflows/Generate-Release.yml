@@ -52,7 +52,8 @@ jobs:
                 cd '${{ github.workspace }}/STAGING'
                 Compress-Archive -Path ./* -DestinationPath "../RELEASE.zip"
           
-      - id:     version
+      - name:   'Get Most Recent Tag'
+        id:     version
         run:    |
                 cd '${{ github.workspace }}'
                 echo ::set-output NAME=VERSION::'$(git describe --tags --abbrev=0)'
