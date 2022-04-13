@@ -21,7 +21,7 @@ jobs:
         run:  |
               apt-get update && apt-get install wget unzip
               cd '${{github.workspace}}'
-              wget -O WolvenKit.zip 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip'
+              Invoke-WebRequest -Method Get -Uri https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip -OutFile WolvenKit.zip
               Expand-Archive -Path WolvenKit.zip -DestinationPath .
               mv "WolvenKit CLI" WolvenKit
               mkdir '${{github.workspace}}/STAGING/archive/pc/mod'
