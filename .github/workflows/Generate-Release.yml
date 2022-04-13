@@ -67,5 +67,5 @@ jobs:
         with:
           draft: true
           generate_release_notes: true
-          files: '*.zip'
+          files: '${{ github.workspace }}/*.zip'
 
