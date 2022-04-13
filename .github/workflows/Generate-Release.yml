@@ -49,16 +49,16 @@ jobs:
         shell:  |
                 pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:    |
+                cd '${{ github.workspace }}'
+                $TAG=$(git describe --tags --abbrev=0)
                 cd '${{ github.workspace }}/STAGING'
-                Compress-Archive -Path ./* -DestinationPath "../RELEASE.zip"
+                Compress-Archive -Path ./* -DestinationPath "../HARDCORE44-ARCO-$TAG.zip"
           
       - name:   'Get Most Recent Tag'
         id:     get_tag
         shell:  |
                 pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:    |
-                cd '${{ github.workspace }}'
-                $TAG=$(git describe --tags --abbrev=0)
                 echo ::set-output name=VERSION::$TAG
 
       - id:     draft
@@ -74,13 +74,5 @@ jobs:
           draft: ${{ steps.draft.outputs.DRAFT }}
           generate_release_notes: true
           tag_name: ${{ steps.get_tag.outputs.VERSION }}
-          
-      - name:   'Upload Release Archive'
-        uses:   actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.make_release.outputs.upload_url }}
-          asset_name: HARDCORE44-ARCO-${{ steps.get_tag.outputs.VERSION }}.zip
-          asset_path: ${{ github.workspace }}/RELEASE.zip
-          asset_content_type: application/zip
+          files: *.zip
+
