@@ -74,5 +74,5 @@ jobs:
           draft: ${{ steps.draft.outputs.DRAFT }}
           generate_release_notes: true
           tag_name: ${{ steps.get_tag.outputs.VERSION }}
-          files: *.zip
+          files: '*.zip'
 
