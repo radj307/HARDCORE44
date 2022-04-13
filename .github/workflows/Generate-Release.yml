@@ -53,11 +53,10 @@ jobs:
                 Compress-Archive -Path ./* -DestinationPath "../RELEASE.zip"
           
       - name:   'Get Most Recent Tag'
-        id:     version
+        id:     get_tag
         run:    |
                 cd '${{ github.workspace }}'
                 $TAG=$(git describe --tags --abbrev=0)
-                echo $TAG
                 echo ::set-output name=VERSION::$TAG
           
       - name:   'Create Github Release'
@@ -65,12 +64,12 @@ jobs:
         uses:   softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          tag_name: ${{ steps.version.outputs.VERSION }}
+          tag_name: ${{ steps.get_tag.outputs.VERSION }}
           
       - name:   'Upload Release Archive'
         uses:   actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.make_release.outputs.upload_url }}
-          asset_name: HARDCORE44-ARCO-${{ steps.version.outputs.VERSION }}.zip
+          asset_name: HARDCORE44-ARCO-${{ steps.get_tag.outputs.VERSION }}.zip
           asset_path: ${{ github.workspace }}/RELEASE.zip
           asset_content_type: application/zip
