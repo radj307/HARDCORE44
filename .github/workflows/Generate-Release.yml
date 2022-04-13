@@ -54,15 +54,24 @@ jobs:
           
       - name:   'Get Most Recent Tag'
         id:     get_tag
+        shell:  |
+                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
         run:    |
                 cd '${{ github.workspace }}'
                 $TAG=$(git describe --tags --abbrev=0)
                 echo ::set-output name=VERSION::$TAG
-          
+
+      - id:     draft
+        shell:  |
+                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
+        run:    |
+                if ('$GITHUB_REF_TYPE' -ne 'tag') { echo '::set-output name=DRAFT::true' } else { echo '::set-output name=DRAFT::false' }
+
       - name:   'Create Github Release'
         id:     make_release
         uses:   softprops/action-gh-release@v1
         with:
+          draft: ${{ steps.draft.outputs.DRAFT }}
           generate_release_notes: true
           tag_name: ${{ steps.get_tag.outputs.VERSION }}
           
