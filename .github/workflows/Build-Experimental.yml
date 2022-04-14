@@ -7,33 +7,41 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast:  true
 
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{github.event.inputs.tag}}
-      
-      - name: 'Setup Pre-Requisites & Prepare Staging Area'
-        run:  |
-              apt-get update && apt-get install wget unzip
-              cd '${{github.workspace}}'
-              wget 'https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.ConsoleLinux-1.6.5.zip' && unzip './*.zip'
-              mv WolvenKit\ CLI\ Linux/ WolvenKit
-              chmod -R 0770 ./WolvenKit
-              mkdir -p '${{github.workspace}}/STAGING/archive/pc/mod' && mkdir -p '${{github.workspace}}/STAGING/r6/scripts'
-              cp '${{github.workspace}}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{github.workspace}}/STAGING/r6/scripts'
-              ls -lAgh
-                  
-      - name: 'Pack .archive'
-        run:  |
-              cd '${{github.workspace}}/basegame_REALISM'
-              ../WolvenKit/WolvenKit.CLI pack -p . -o '../STAGING/archive/pc/mod'
+          fetch-depth: 0
         
-      - name:   'Upload Artifact'
-        uses:   actions/upload-artifact@v2
+      - name: 'Prepare Staging Area'
+        run:  |
+              mkdir '${{ github.workspace }}/STAGING/archive/pc/mod'
+              mkdir '${{ github.workspace }}/STAGING/r6/scripts'
+              
+      - name: 'Stage Scripts'
+        run:  cp '${{ github.workspace }}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{ github.workspace }}/STAGING/r6/scripts'
+              
+      - name:  'Setup Wolvenkit CLI'
+        shell: |
+               pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
+        run:   |
+               cd '${{ github.workspace }}'
+               Invoke-WebRequest -Method Get -Uri https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip -OutFile WolvenKit.zip
+               Expand-Archive -Path WolvenKit.zip -DestinationPath .
+               rm WolvenKit.zip
+               mv "WolvenKit CLI" WolvenKit
+               
+      - name:  'Pack Mod Archive'
+        shell: |
+               pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
+        run:   |
+               cd '${{ github.workspace }}/basegame_REALISM'
+               ../WolvenKit/WolvenKit.CLI pack -p . -o '../STAGING/archive/pc/mod'
+        
+      - uses:   actions/upload-artifact@v2
         with:
           name: 'HARDCORE44-ARCO'
-          path: '${{github.workspace}}/STAGING/*'
+          path: '${{ github.workspace }}/STAGING/*'
