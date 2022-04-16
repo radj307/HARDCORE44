@@ -2,14 +2,14 @@ name: Build-Experimental
 
 on:
   push:
-    branches: experimental
+    branches: [ 'experimental' ]
   workflow_dispatch:
+  schedule:
+  - cron:   '0 0 * * *'
 
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      fail-fast:  true
 
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,9 @@ jobs:
               mkdir '${{ github.workspace }}/STAGING/r6/scripts'
               
       - name: 'Stage Scripts'
-        run:  cp '${{ github.workspace }}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{ github.workspace }}/STAGING/r6/scripts'
+        run:  |
+              cd '${{ github.workspace }}'
+              Get-ChildItem -Path redscript | Copy-Item -Recurse -Destination '${{ github.workspace }}/STAGING/r6/scripts'
               
       - name:  'Setup Wolvenkit CLI'
         shell: |
