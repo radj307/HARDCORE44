@@ -20,10 +20,12 @@ jobs:
         run:  |
               mkdir '${{ github.workspace }}/STAGING/archive/pc/mod'
               mkdir '${{ github.workspace }}/STAGING/r6/scripts'
-              
+      
       - name: 'Stage Scripts'
-        run:  cp '${{ github.workspace }}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{ github.workspace }}/STAGING/r6/scripts'
-              
+        run:  |
+              cd '${{ github.workspace }}'
+              Get-ChildItem -Path redscript | Copy-Item -Recurse -Destination '${{ github.workspace }}/STAGING/r6/scripts'
+
       - name:  'Setup Wolvenkit CLI'
         shell: |
                pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"

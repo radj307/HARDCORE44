@@ -22,7 +22,9 @@ jobs:
               mkdir '${{ github.workspace }}/STAGING/r6/scripts'
               
       - name: 'Stage Scripts'
-        run:  cp '${{ github.workspace }}/redscript/REALISTICCOMBATOVERHAUL.reds' '${{ github.workspace }}/STAGING/r6/scripts'
+        run:  |
+              cd '${{ github.workspace }}'
+              Get-ChildItem -Path redscript | Copy-Item -Recurse -Destination '${{ github.workspace }}/STAGING/r6/scripts'
               
       - name:  'Setup Wolvenkit CLI'
         shell: |
