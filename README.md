@@ -17,17 +17,19 @@ _(Note: This list is non-exhaustive, and may not accurately reflect changes made
 - Raises **RCO**'s player health limit of `100` at higher levels.
 - Decreases quickhack damage.
 - Decreases the amount of melee damage gained per level of the __Body__ attribute.
+  This makes melee damage scale in a more sensible way.
 
 ## Enemies
 
 - Increases the DPS of all NPCs.  
   This makes shootouts _much_ harder.  
-- Decreases the health of all NPCs.
+- Changes the scaling on base enemy health, starts at 100 and increases by 1 for each level.
 
 ## Gameplay
 
 - Removed a significant amount of records related to experience gain & the levelling system.  
   This improves **ARCO**'s compatibility with other mods, without sacrificing any of the features added by **RCO**.  
+  As of 0.1.2, ARCO is fully compatible with **[Level Scaling and Balance](https://www.nexusmods.com/cyberpunk2077/mods/1712)**.
 
 
 # Getting Started
