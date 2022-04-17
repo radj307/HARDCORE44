@@ -2,14 +2,14 @@ name: Build-Experimental
 
 on:
   push:
-    branches: experimental
+    branches: [ 'experimental' ]
   workflow_dispatch:
+  schedule:
+  - cron:   '0 0 * * *'
 
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      fail-fast:  true
 
     steps:
       - uses: actions/checkout@v3
