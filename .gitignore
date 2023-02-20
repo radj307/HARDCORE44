@@ -1,3 +1,4 @@
-
+install_log.xml
 *.archive
 *.zip
+packed/
