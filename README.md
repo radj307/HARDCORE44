@@ -34,10 +34,6 @@ _(Note: This list is non-exhaustive, and may not accurately reflect changes made
 
 # Getting Started
 
-Adding the mod mid-playthrough is relatively painless, however the same cannot be said for removing it.  
-The level requirement removal script `REALISTICCOMBATOVERHAUL.reds` cannot be removed without issue as the level requirements of all items in your inventory/stash remain unchanged, but your ability to bypass those level requirements disappears.  
-_This usually results in the player character being left unarmed, naked, and afraid - until new items are bought or scavenged from NPCs._
-
 ## Installation
 
  1. Download and install the most recent version of [redscript](https://www.nexusmods.com/cyberpunk2077/mods/1511).
