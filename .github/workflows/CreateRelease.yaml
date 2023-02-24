@@ -1,52 +1,58 @@
-name: Build-Experimental
+name: 'Create Release'
 
 on:
   push:
-    branches: [ 'experimental' ]
+    tags: [ '*.*.*' ]
   workflow_dispatch:
-  #schedule:
-  #- cron:   '0 0 * * *'  # every day at midnight
-
-defaults:
-  run:
-    shell:  |
-            pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
 
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: |
+               pwsh -noninteractive -command "try {{ $ErrorActionPreference='Stop'; . '{0}' }} catch {{ Write-Error ""FAILED: $_""; throw; }} if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) {{ exit $LASTEXITCODE }}"
+
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+
       - name: 'Stage Resources'
         run:  |
               mkdir packed/archive/pc/mod
               cp -Force -Recurse source/resources/* packed
-
-      - name: DEBUG PATHS
-        run:  ls -Recurse -Force packed
 
       - name: 'Fix location of TweakXL YAML files'
         run:  |
               mkdir packed/r6/tweaks
               mv -Force packed/HARDCORE44 packed/r6/tweaks/HARDCORE44
 
-      - name: 'Setup Wolvenkit CLI'
+      - name: 'WolvenKit: Setup CLI'
         run:  |
               Invoke-WebRequest -Method Get -Uri https://github.com/WolvenKit/WolvenKit/releases/download/8.5.3/WolvenKit.Console-1.6.5.zip -OutFile WolvenKit.zip
               Expand-Archive -Path WolvenKit.zip -DestinationPath .
               rm WolvenKit.zip
               mv "WolvenKit CLI" WolvenKit
-               
-      - name: 'Pack Mod Archive'
+
+      - name: 'WolvenKit: Pack Mod Archive'
         run:  |
               ./WolvenKit/WolvenKit.CLI.exe pack -p source/archive -o .
               mv -Force *.archive packed/archive/pc/mod/Hardcore44.archive
 
-      - uses:   actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
         with:
-          name: 'HARDCORE44-ARCO'
+          name: 'HARDCORE44-ARCO.zip'
           path: 'packed/*'
+      
+      - name: 'Create Release Archive'
+        run:  |
+              Compress-Archive packed/* HARDCORE44-ARCO.zip
+
+      - name: 'Upload Release to Github'
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          generate_release_notes: true
+          files: 'HARDCORE44-ARCO.zip'
