@@ -1,10 +1,16 @@
+## HARDCORE44 Melee Damage Tweak
+# Reduces the damage done by melee weapons.
+#
+# Requires TweakXL:  https://www.nexusmods.com/cyberpunk2077/mods/4197
+
+
 # Fists:
 Items.Base_Fists_RPG_Stats_inline2.value: 0.66
 # Gorilla Arms:
-#Items.Strong_Arms_RPG_Stats_inline1.value: 0.15
+Items.Strong_Arms_RPG_Stats_inline1.value: 0.15
 # Mantis Blades:
-#Items.MantisBladesRPGStats_inline3.value: 0.2
+Items.MantisBladesRPGStats_inline3.value: 0.3
 # Monowire:
-Items.Nano_Wires_RPG_Stats_inline4.value: 1.2
+Items.Nano_Wires_RPG_Stats_inline4.value: 0.25
 # Katanas:
-#Items.Base_Katana_RPG_Stats_inline3.value: 0.5
+Items.Base_Katana_RPG_Stats_inline3.value: 0.7
