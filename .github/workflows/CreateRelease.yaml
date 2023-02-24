@@ -19,6 +19,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 'Get Version Tag'
+        id:   get_version
+        run:  |
+              $TAG = ${GITHUB_REF/refs\/tags\//}
+              echo "Version Tag: $TAG"
+              echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: 'Update Project Version' # This isn't really necessary, but we might as well keep the version number up-to-date.
+        run:  |
+              $CPMODPROJ = $(Get-ChildItem -File -Filter *.cpmodproj).Name
+              [xml]$CONTENT = Get-Content $CPMODPROJ
+              $CONTENT.CP77Mod.Version = "${{ steps.get_version.outputs.tag }}"
+              $CONTENT.Save($CPMODPROJ)
+
       - name: 'Stage Resources'
         run:  |
               mkdir packed/archive/pc/mod
@@ -54,5 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: true
+          tag_name: ${{ steps.get_version.outputs.tag }}
           generate_release_notes: true
+          fail_on_unmatched_files: true
           files: 'HARDCORE44-ARCO.zip'
