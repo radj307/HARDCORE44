@@ -25,9 +25,6 @@ jobs:
               mkdir packed/archive/pc/mod
               cp -Force -Recurse source/resources/* packed
 
-      - name: DEBUG PATHS
-        run:  ls -Recurse -Force packed
-
       - name: 'Fix location of TweakXL YAML files'
         run:  |
               mkdir packed/r6/tweaks
