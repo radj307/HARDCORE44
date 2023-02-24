@@ -3,7 +3,6 @@ name: Build-Experimental
 on:
   push:
     branches: [ 'experimental' ]
-  workflow_dispatch:
   #schedule:
   #- cron:   '0 0 * * *'  # every day at midnight
 
@@ -25,9 +24,6 @@ jobs:
         run:  |
               mkdir packed/archive/pc/mod
               cp -Force -Recurse source/resources/* packed
-
-      - name: DEBUG PATHS
-        run:  ls -Recurse -Force packed
 
       - name: 'Fix location of TweakXL YAML files'
         run:  |
