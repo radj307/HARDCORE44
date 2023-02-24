@@ -43,7 +43,7 @@ jobs:
               ./WolvenKit/WolvenKit.CLI.exe pack -p source/archive -o .
               mv -Force *.archive packed/archive/pc/mod/Hardcore44.archive
 
-      - uses:   actions/upload-artifact@v2
+      - uses:   actions/upload-artifact@v3
         with:
           name: 'HARDCORE44-ARCO'
           path: 'packed/*'
