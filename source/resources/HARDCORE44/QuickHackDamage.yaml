@@ -1,0 +1,15 @@
+## HARDCORE44 QuickHack Damage Tweak
+# Reduces the damage done by quick hacks.
+# 
+# Requires TweakXL:  https://www.nexusmods.com/cyberpunk2077/mods/4197
+
+
+# Short Circut:
+Attacks.OverloadQuickHackAttackLevel1_inline0.value: 0.04   # Default: 0.35
+# Overheat:
+Attacks.OverheatQuickHackAttackLevel1_inline0.value: 0.005  # Default: 0.04
+# Contagion (Instant/DPS):
+Attacks.ContagionAttackLevel1_inline0.value: 0.015          # Default: 0.02
+Attacks.ContagionPoisonAttack_inline0.value: 0.0015         # Default: 0.005
+# Synapse Burnout:
+Attacks.BrainMeltHackAttackLevel2_inline0.value: 0.05       # Default: 0.35
