@@ -40,7 +40,7 @@ jobs:
       - name: 'Pack Mod Archive'
         run:  |
               ./WolvenKit/WolvenKit.CLI.exe pack -p source/archive -o .
-              mv -Force *.archive packed/archive/pc/mod/Hardcore44.archive
+              mv -Force *.archive packed/archive/pc/mod/HARDCORE44.archive
 
       - uses:   actions/upload-artifact@v3
         with:
